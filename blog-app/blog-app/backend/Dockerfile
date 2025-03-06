@@ -1,26 +1,22 @@
-# Development Dockerfile for backend
 FROM golang:1.21-alpine
 
-# Set working directory
-WORKDIR /app
-
-# Install dependencies
+# Install development tools
 RUN apk add --no-cache git
 
-# Copy go.mod and go.sum files
+# Set working directory for development
+WORKDIR /src
+
+# Copy go.mod and go.sum for dependency management
 COPY go.mod go.sum ./
 
-# Pre-download dependencies
+# Download dependencies
 RUN go mod tidy
 
-# Copy the source code
-COPY . .
+# The source code will be mounted from host in development mode
+# No need to COPY . . in development mode
 
-# Build the application with explicit path
-RUN go build -o /app/api ./cmd/api
-
-# Expose the port
+# Expose API port
 EXPOSE 8080
 
-# Run the application with absolute path
-CMD ["/app/api"]
+# Run the application in development mode
+CMD ["go", "run", "./cmd/api"]

@@ -38,7 +38,8 @@ services:
       JWT_SECRET: your-secret-key
       PORT: 8080
     volumes:
-      - ./backend:/app
+      - ./backend:/src
+    working_dir: /src
     networks:
       - blog-network
     depends_on:
@@ -53,7 +54,7 @@ services:
       dockerfile: Dockerfile
     container_name: blog-frontend
     ports:
-      - "3000:3000"
+      - "3001:3000"
     environment:
       NEXT_PUBLIC_API_URL: http://localhost:8080/api
     volumes:
