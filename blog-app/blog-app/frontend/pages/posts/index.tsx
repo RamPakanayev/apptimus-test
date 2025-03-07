@@ -31,7 +31,7 @@ const PostsPage: React.FC = () => {
       }
 
       try {
-        const response = await axios.get('/api/posts');
+        const response = await axios.get('/posts');
         setPosts(response.data);
         setError(null);
       } catch (err: any) {
@@ -54,7 +54,7 @@ const PostsPage: React.FC = () => {
   const handleDeletePost = async (id: number) => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       try {
-        await axios.delete(`/api/posts/${id}`);
+        await axios.delete(`/posts/${id}`);
         setPosts(posts.filter(post => post.id !== id));
       } catch (err: any) {
         setError(err.response?.data || 'Failed to delete post');

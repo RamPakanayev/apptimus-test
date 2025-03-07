@@ -32,7 +32,7 @@ const EditPostPage: React.FC = () => {
       }
 
       try {
-        const response = await axios.get(`/api/posts/${id}`);
+        const response = await axios.get(`/posts/${id}`);
         const fetchedPost = response.data;
         
         // Check if the current user is the author

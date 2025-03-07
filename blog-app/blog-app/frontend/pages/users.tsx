@@ -27,7 +27,7 @@ const UsersPage: React.FC = () => {
       }
 
       try {
-        const response = await axios.get('/api/users');
+        const response = await axios.get('/users');
         setUsers(response.data);
         setError(null);
       } catch (err: any) {
@@ -50,7 +50,7 @@ const UsersPage: React.FC = () => {
   const handleDeleteUser = async (id: number) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        await axios.delete(`/api/users/${id}`);
+        await axios.delete(`/users/${id}`);
         setUsers(users.filter(user => user.id !== id));
         
         // If the current user deleted their own account, log them out

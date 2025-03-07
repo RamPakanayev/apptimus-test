@@ -72,10 +72,10 @@ const PostEditor: React.FC<PostEditorProps> = ({ post, isEditing = false }) => {
 
       if (isEditing && post?.id) {
         // Update existing post
-        await axios.put(`/api/posts/${post.id}`, { title, content });
+        await axios.put(`/posts/${post.id}`, { title, content });
       } else {
         // Create new post
-        await axios.post('/api/posts', { title, content });
+        await axios.post('/posts', { title, content });
       }
 
       router.push('/posts');
