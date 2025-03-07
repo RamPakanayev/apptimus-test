@@ -2,7 +2,6 @@
 const nextConfig = {
   reactStrictMode: true,
   experimental: {
-    // Configure turbopack correctly
     turbo: {
       // Optional turbo settings
     }
@@ -11,10 +10,9 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://backend:8080/api/:path*',
+        destination: 'http://backend:8080/api/:path*', // Keep the /api/ prefix
       },
     ];
   }
 };
-
 export default nextConfig;

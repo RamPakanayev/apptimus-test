@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: blog-mysql-prod
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
+      MYSQL_DATABASE: blogapp
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - blog-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-password}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: blog-backend-prod
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-password}
+      DB_NAME: blogapp
+      JWT_SECRET: ${JWT_SECRET:-your-secret-key}
+      PORT: 8080
+    networks:
+      - blog-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: always
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: blog-frontend-prod
+    ports:
+      - "3001:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://${API_HOST:-localhost}:8080/api
+    networks:
+      - blog-network
+    depends_on:
+      - backend
+    restart: always
+
+  # Static site generator and NGINX
+  static:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: blog-static-prod
+    ports:
+      - "8090:80"
+    volumes:
+      - static-site:/usr/share/nginx/html
+    networks:
+      - blog-network
+    depends_on:
+      - backend
+    restart: always
+
+  # Static site generator job
+  static-generator:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    container_name: blog-static-generator
+    command: >
+      sh -c "
+        echo 'Waiting for backend to be ready...' &&
+        sleep 10 &&
+        ./static-gen -output /static &&
+        echo 'Static site generation complete!'
+      "
+    volumes:
+      - static-site:/static
+    networks:
+      - blog-network
+    depends_on:
+      - backend
+      - mysql
+    restart: "no"
+
+networks:
+  blog-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  static-site:

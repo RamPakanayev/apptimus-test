@@ -1,3 +1,4 @@
+-- mysql/init.sql
 -- Database initialization
 
 -- Create the database if it doesn't exist
@@ -35,5 +36,5 @@ VALUES
 INSERT INTO posts (title, content, author_id, created_at, updated_at)
 VALUES 
     ('Welcome to our Blog', '<p>This is the first post on our blog platform. Welcome everyone!</p>', 1, NOW(), NOW()),
-    ('Getting Started with Go', '<p>Go is a statically typed, compiled programming language designed at Google.</p>', 1, NOW(), NOW()),
-    ('Introduction to Next.js', '<p>Next.js is a React framework that enables several extra features.</p>', 2, NOW(), NOW());
+    ('Getting Started with Go', '<p>Go is a statically typed, compiled programming language designed at Google.</p><p>It is syntactically similar to C, but with memory safety, garbage collection, structural typing, and CSP-style concurrency.</p>', 1, NOW(), NOW()),
+    ('Introduction to Next.js', '<p>Next.js is a React framework that enables several extra features, including server-side rendering and generating static websites.</p>', 2, NOW(), NOW());

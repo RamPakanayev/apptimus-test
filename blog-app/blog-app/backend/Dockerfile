@@ -1,22 +1,43 @@
-FROM golang:1.21-alpine
+# backend/Dockerfile
+FROM golang:1.21-alpine AS builder
 
-# Install development tools
+# Set working directory
+WORKDIR /app
+
+# Install dependencies
 RUN apk add --no-cache git
 
-# Set working directory for development
-WORKDIR /src
-
-# Copy go.mod and go.sum for dependency management
-COPY go.mod go.sum ./
+# Copy go.mod and go.sum files
+COPY go.mod ./
+COPY go.sum ./
 
 # Download dependencies
+RUN go mod download
 RUN go mod tidy
 
-# The source code will be mounted from host in development mode
-# No need to COPY . . in development mode
+# Copy the source code
+COPY . .
 
-# Expose API port
+# Build the application with explicit output path
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o /app/api ./cmd/api
+# List directories to debug
+RUN ls -la /app/
+
+# Create a minimal image for running the application
+FROM alpine:latest
+
+# Set working directory
+WORKDIR /app
+
+# Copy the binary from the builder stage with explicit paths
+COPY --from=builder /app/api /app/api
+# List directories to debug
+RUN ls -la /app/
+# Make sure the binary is executable
+RUN chmod +x /app/api
+
+# Expose the port
 EXPOSE 8080
 
-# Run the application in development mode
-CMD ["go", "run", "./cmd/api"]
+# Run the application with absolute path
+CMD ["/app/api"]
