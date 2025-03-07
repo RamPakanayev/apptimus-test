@@ -5,7 +5,7 @@ import { AuthProvider } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-
+import '../styles/output.css'; 
 // Add axios default config
 import axios from 'axios';
 axios.defaults.baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
