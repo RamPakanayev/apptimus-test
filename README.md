@@ -17,6 +17,7 @@ blog-app/
 │   ├── docker-compose.prod.yml # Docker compose for production
 │   └── [README.md](./blog-app/README.md) # Detailed README for blog app
 ├── task1                     # System design task documentation
+│   └── [task1-answer.md](./task1/task1-answer.md) # Task 1 answer document
 └── README.md                 # General README
 ```
 
@@ -25,6 +26,7 @@ blog-app/
 - **Task #1** (in `task1` directory):
   - System design and product understanding focused.
   - Addresses managing content for multiple websites, permissions, and user systems.
+  - Detailed answer available in [task1-answer.md](./task1/task1-answer.md).
 
 - **Task #2** (in `blog-app/blog-app` directory):
   - Coding and DevOps oriented.
