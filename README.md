@@ -1,183 +1,239 @@
 # Blog Application
 
-## Overview
-This is a full-stack blog application built using **Go (backend)** and **Next.js (frontend)** with **MySQL (database)** and **NGINX (reverse proxy)**. The project is fully containerized using **Docker** and orchestrated with **Docker Compose**.
+A full-stack blog platform built with Go, Next.js, MySQL, and Docker. This application features user authentication, post management with WYSIWYG editing, and static site generation capabilities.
 
-## Project Structure
-```
-blog-app/
-│   README.md
-│   docker-compose.yml
-│   docker-compose.prod.yml
-│
-├── blog-app/
-    ├── backend/
-    │   ├── cmd/
-    │   │   ├── api/
-    │   │   │   └── main.go
-    │   │   ├── static-gen/
-    │   │       └── main.go
-    │   ├── internal/
-    │   │   ├── auth/auth.go
-    │   │   ├── database/database.go
-    │   │   ├── handlers/
-    │   │   │   ├── auth_handlers.go
-    │   │   │   ├── health.go
-    │   │   │   ├── post_handlers.go
-    │   │   │   ├── user_handlers.go
-    │   │   ├── middleware/auth.go
-    │   │   ├── models/
-    │   │       ├── post.go
-    │   │       ├── user.go
-    │   ├── Dockerfile
-    │   ├── Dockerfile.prod
-    │   ├── go.mod
-    │   ├── go.sum
-    │
-    ├── frontend/
-    │   ├── components/
-    │   │   ├── Layout.tsx
-    │   │   ├── Navbar.tsx
-    │   │   ├── PostEditor.tsx
-    │   ├── context/
-    │   │   ├── AuthContext.tsx
-    │   ├── pages/
-    │   │   ├── posts/[id]/edit.tsx
-    │   │   ├── posts/[id].tsx
-    │   │   ├── posts/index.tsx
-    │   │   ├── posts/new.tsx
-    │   │   ├── index.tsx
-    │   │   ├── login.tsx
-    │   │   ├── register.tsx
-    │   ├── public/
-    │   ├── styles/
-    │   ├── Dockerfile
-    │   ├── Dockerfile.prod
-    │   ├── package.json
-    │   ├── tsconfig.json
-    │
-    ├── mysql/
-    │   ├── init.sql
-    │
-    ├── nginx/
-    │   ├── conf.d/
-    │   ├── nginx.conf
-    │   ├── Dockerfile
-```
+## Table of Contents
+
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Features](#features)
+- [API Endpoints](#api-endpoints)
+- [Static Site Generation](#static-site-generation)
+- [Database Access](#database-access)
+- [Troubleshooting](#troubleshooting)
+- [Cross-Platform Compatibility](#cross-platform-compatibility)
+
+## Architecture
+
+- **Backend**: Go with Gorilla Mux
+- **Frontend**: Next.js with React and TypeScript
+- **Database**: MySQL
+- **Containerization**: Docker & Docker Compose
+- **Styling**: Tailwind CSS
+- **Authentication**: JWT
 
 ## Prerequisites
-- **Docker** & **Docker Compose** installed
-- **Node.js (v20+ recommended)** for frontend development
-- **Go (v1.21+ recommended)** for backend development
 
-## Environment Variables
-Create a `.env` file for the backend:
-```env
-DB_HOST=mysql
-DB_PORT=3306
-DB_USER=root
-DB_PASSWORD=password
-DB_NAME=blogapp
-JWT_SECRET=your-secret-key
-PORT=8080
+- [Docker](https://docs.docker.com/get-docker/) (v20.10+)
+- [Docker Compose](https://docs.docker.com/compose/install/) (v2.0+)
+- [Git](https://git-scm.com/downloads) (optional)
+
+## Getting Started
+
+### Clone the Repository
+
+```bash
+git clone <repository-url>
+cd blog-app
 ```
 
-Create a `.env.local` file for the frontend:
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
+### Development Environment
+
+Start the containers:
+
+```bash
+docker-compose up -d
 ```
 
-## Running the Project
-### 1. Clone the Repository
-```sh
-git clone https://github.com/your-repo/blog-app.git
-cd blog-app/blog-app
+Access the application:
+
+- **Frontend**: http://localhost:3001
+- **Backend API**: http://localhost:8080/api
+- **MySQL Database**: localhost:3306
+
+**Default credentials:**
+
+- Admin: `admin@example.com` / `password`
+- User: `user1@example.com` / `password`
+
+### Production Environment
+
+Start containers in production:
+
+```bash
+docker-compose -f docker-compose.prod.yml up -d
 ```
 
-### 2. Start Services with Docker
-```sh
-docker-compose up --build
-```
-This will start the **backend**, **frontend**, **MySQL**, and **NGINX** services.
+Generate static site (optional):
 
-### 3. Load Sample Data
-To load the initial database schema and sample data:
-```sh
-docker exec -it blog-mysql mysql -u root -ppassword blogapp < mysql/init.sql
+```bash
+docker-compose -f docker-compose.prod.yml run static-generator
 ```
 
-### 4. Access the Application
-- **Frontend**: `http://localhost:3001`
-- **API**: `http://localhost:8080/api`
-- **NGINX**: `http://localhost`
+Access the application:
 
-## Development Mode
-To run services without Docker:
+- **Frontend**: http://localhost:3000
+- **Static Site**: http://localhost:8090
+- **Backend API**: http://localhost:8080/api
 
-### **Backend**
-```sh
-cd backend
-export $(cat .env | xargs)
-go run cmd/api/main.go
+## Project Structure
+
+```
+blog-app/
+├── backend/
+│   ├── cmd/
+│   │   ├── api/
+│   │   └── static-gen/
+│   ├── internal/
+│   │   ├── auth/
+│   │   ├── handlers/
+│   │   ├── middleware/
+│   │   ├── models/
+│   │   └── database/
+│   ├── Dockerfile
+│   └── Dockerfile.prod
+├── frontend/
+│   ├── components/
+│   ├── context/
+│   ├── pages/
+│   ├── public/
+│   ├── styles/
+│   ├── Dockerfile
+│   └── Dockerfile.prod
+├── mysql/
+│   └── init.sql
+├── nginx/
+│   ├── nginx.conf
+│   └── Dockerfile
+├── docker-compose.yml
+├── docker-compose.prod.yml
+└── README.md
 ```
 
-### **Frontend**
-```sh
-cd frontend
-npm install
-npm run dev
-```
+## Features
 
-## Production Deployment
-```sh
-docker-compose -f docker-compose.prod.yml up --build -d
-```
-This starts the app in detached mode with **production-ready settings**.
+### User Management
+- Registration and login
+- JWT-based authentication
+- Admin user management
+
+### Post Management
+- CRUD operations
+- Rich text editing
+- Author-specific permissions
+
+### Frontend
+- Responsive design (Tailwind CSS)
+- Dynamic routing (Next.js)
+- React Context for state management
+
+### Backend
+- RESTful Go API
+- JWT middleware
+- MySQL with relational schema
+- Static site generation
 
 ## API Endpoints
-### **Authentication**
-- `POST /api/auth/login` - Login a user
-- `POST /api/auth/register` - Register a new user
 
-### **Posts**
-- `GET /api/posts` - Get all posts
-- `GET /api/posts/:id` - Get a single post
-- `POST /api/posts` - Create a post
-- `PUT /api/posts/:id` - Update a post
-- `DELETE /api/posts/:id` - Delete a post
+### Authentication
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+
+### Users
+- `GET /api/users`
+- `DELETE /api/users/{id}`
+
+### Posts
+- `GET /api/posts`
+- `POST /api/posts`
+- `GET /api/posts/{id}`
+- `PUT /api/posts/{id}`
+- `DELETE /api/posts/{id}`
+
+## Static Site Generation
+
+Generate static site:
+
+```bash
+docker-compose -f docker-compose.prod.yml run static-generator
+```
+
+Static site accessible at: `http://localhost:8090`
+
+## Database Access
+
+MySQL Database credentials:
+
+- Host: `localhost`
+- Port: `3306`
+- Username: `root`
+- Password: `password`
+- Database: `blogapp`
 
 ## Troubleshooting
-### **Check Logs**
-```sh
-docker logs blog-backend
+
+### Container Startup Issues
+
+```bash
+docker-compose logs backend
+docker-compose logs frontend
+docker-compose logs mysql
 ```
 
-### **Check Running Containers**
-```sh
-docker ps
+Restart containers:
+
+```bash
+docker-compose restart backend frontend
 ```
 
-### **Restart Services**
-```sh
-docker-compose restart
+### Database Connection Issues
+
+Check database health:
+
+```bash
+docker-compose ps
 ```
 
-## Running on Different OS
-### **MacOS & Linux**
-```sh
-sudo docker-compose up --build
+Verify database tables:
+
+```bash
+docker exec -it blog-mysql mysql -u root -ppassword -e "USE blogapp; SHOW TABLES;"
 ```
 
-### **Windows (WSL2 Recommended)**
-```sh
-docker-compose up --build
+### Frontend Styling Issues
+
+Rebuild Tailwind CSS:
+
+```bash
+docker-compose exec frontend sh -c "npx tailwindcss -i ./styles/globals.css -o ./styles/output.css"
+docker-compose restart frontend
 ```
 
-If issues arise with MySQL, increase the **WSL2 memory limit** in `~/.wslconfig`:
-```ini
-[wsl2]
-memory=4GB
+### Port Conflicts
+
+Check ports:
+
+```bash
+# Linux/macOS
+sudo lsof -i :3001
+sudo lsof -i :8080
+sudo lsof -i :3306
+
+# Windows
+netstat -ano | findstr :3001
+netstat -ano | findstr :8080
+netstat -ano | findstr :3306
 ```
 
-## License
-MIT License
+Modify ports in `docker-compose.yml` as needed.
+
+## Cross-Platform Compatibility
+
+Tested platforms:
+- Ubuntu 20.04 LTS
+- macOS Monterey (12.0+)
+- Windows 11 (WSL2)
+
+Refer to troubleshooting for specific platform issues.
