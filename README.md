@@ -30,6 +30,6 @@ blog-app/
   - Coding and DevOps oriented.
   - Detailed full-stack implementation using Go, Next.js, MySQL, Docker, and static site generation.
 
-For detailed setup instructions, architecture explanations, and other specifics related to the full-stack blog application, please refer to the [internal README.md](./blog-app/README.md) located in the `blog-app/blog-app` directory.
+For detailed setup instructions, architecture explanations, and other specifics related to the full-stack blog application, please refer to the [internal README.md](./blog-app/blog-app/README.md) located in the `blog-app/blog-app` directory.
 
 Good luck!
